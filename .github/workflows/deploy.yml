@@ -70,13 +70,13 @@ jobs:
             ${{ secrets.DOCKER_USERNAME }}/peddit-api:latest
             ${{ secrets.DOCKER_USERNAME }}/peddit-api:${{ github.sha }}
 
-#  deploy:
-#    name: Deploy no Render
-#    runs-on: ubuntu-latest
-#    needs: docker
-#    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+  deploy:
+    name: Deploy no Render
+    runs-on: ubuntu-latest
+    needs: docker
+    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
 
-#    steps:
-#      - name: Disparar deploy no Render
-#        run: |
-#          curl -X POST ${{ secrets.RENDER_DEPLOY_HOOK }}
+    steps:
+      - name: Disparar deploy no Render
+        run: |
+          curl -X POST ${{ secrets.RENDER_DEPLOY_HOOK }}
