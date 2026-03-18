@@ -1,0 +1,10 @@
+.gradle/
+build/
+.idea/
+*.iml
+out/
+.git/
+.gitignore
+application-dev.yml
+HELP.md
+README.md
