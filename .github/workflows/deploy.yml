@@ -39,6 +39,7 @@ jobs:
       - name: Build e testes
         working-directory: api
         run: |
+          cd api
           chmod +x gradlew
           ./gradlew build --no-daemon
         env:
