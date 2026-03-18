@@ -1,7 +1,7 @@
 FROM gradle:8.14-jdk21 AS build
 WORKDIR /app
-COPY . .
-RUN gradle build -x test --no-daemon
+COPY api .
+RUN gradle build --no-daemon -x test --project-dir /app
 
 FROM eclipse-temurin:21-jre
 WORKDIR /app
