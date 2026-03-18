@@ -36,6 +36,9 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-gradle-
 
+      - name: Listar estrutura
+        run: ls -la
+
       - name: Build e testes
         working-directory: api
         run: |
