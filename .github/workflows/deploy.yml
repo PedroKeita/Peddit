@@ -40,9 +40,7 @@ jobs:
         run: ls -la
 
       - name: Build e testes
-        working-directory: api
         run: |
-          cd api
           chmod +x gradlew
           ./gradlew build --no-daemon
         env:
@@ -70,7 +68,7 @@ jobs:
       - name: Build e push da imagem
         uses: docker/build-push-action@v5
         with:
-          context: ./api
+          context: .
           push: true
           tags: |
             ${{ secrets.DOCKER_USERNAME }}/peddit-api:latest
