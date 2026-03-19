@@ -1,6 +1,8 @@
 package com.peddit.peddit_api.controller;
 
+import com.peddit.peddit_api.dto.request.LoginRequest;
 import com.peddit.peddit_api.dto.request.RegisterRequest;
+import com.peddit.peddit_api.dto.response.AuthResponse;
 import com.peddit.peddit_api.dto.response.UserResponse;
 import com.peddit.peddit_api.service.AuthService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -28,5 +30,11 @@ public class AuthController {
         UserResponse response = authService.register(request);
 
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
+    }
+
+    @PostMapping("/login")
+    @Operation(summary = "Login e retorna token JWT")
+    public ResponseEntity<AuthResponse> login(@Valid @RequestBody LoginRequest request) {
+        return ResponseEntity.ok(authService.login(request));
     }
 }
