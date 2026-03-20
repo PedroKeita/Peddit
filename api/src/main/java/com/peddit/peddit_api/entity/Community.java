@@ -4,38 +4,38 @@ import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
+
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
-@Table(name = "users")
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class User {
+@Table(name = "communities")
+public class Community {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false, unique = true, length = 50)
-    private String username;
+    @Column(nullable = false, unique = true, length = 100)
+    private String name;
 
-    @Column(nullable = false, unique = true, length = 150)
-    private String email;
+    @Column (length = 500)
+    private String description;
 
-    @Column(name = "password", nullable = false)
-    private String passwordHash;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "created_by")
+    private User createdBy;
 
-    @Enumerated(EnumType.STRING)
-    @Column(nullable = false, length = 20)
+    @OneToMany(mappedBy = "community", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @Builder.Default
-    private UserRole role = UserRole.USER;
+    private List<Post> posts = new ArrayList<>();
 
-    @Column(nullable = false)
-    @Builder.Default
-    private Boolean active = true;
 
     @CreationTimestamp
     @Column(name = "created_at", updatable = false)
@@ -44,7 +44,5 @@ public class User {
     @UpdateTimestamp
     @Column(name = "updated_at")
     private LocalDateTime updatedAt;
-
-
 
 }
