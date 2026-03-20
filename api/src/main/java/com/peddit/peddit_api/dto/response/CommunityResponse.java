@@ -21,7 +21,7 @@ public class CommunityResponse {
                 .id(community.getId())
                 .name(community.getName())
                 .description(community.getDescription())
-                .postCount(community.getPosts().size())
+                .postCount(0L)
                 .createdAt(community.getCreatedAt())
                 .build();
     }
