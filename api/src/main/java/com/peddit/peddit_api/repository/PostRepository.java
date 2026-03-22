@@ -10,10 +10,9 @@ import org.springframework.data.repository.query.Param;
 public interface PostRepository  extends JpaRepository<Post, Long> {
 
     @Query("""
-         SELECT p FROM Post p
-         WHERE (:communityId IS NULL OR p.community.id = :communityId)
-         AND (:q IS NULL OR LOWER(p.title) LIKE LOWER(CONCAT('%', :q, '%')))   
-            """)
+ SELECT p FROM Post p
+ WHERE (:communityId IS NULL OR p.community.id = :communityId)
+""")
     Page<Post> findAllWithFilters(
             @Param("communityId") Long communityId,
             @Param("q") String q,
