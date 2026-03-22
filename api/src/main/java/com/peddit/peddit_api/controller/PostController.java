@@ -1,6 +1,7 @@
 package com.peddit.peddit_api.controller;
 
 import com.peddit.peddit_api.dto.request.PostRequest;
+import com.peddit.peddit_api.dto.request.PostUpdateRequest;
 import com.peddit.peddit_api.dto.response.PostDetailResponse;
 import com.peddit.peddit_api.dto.response.PostResponse;
 import com.peddit.peddit_api.service.PostService;
@@ -33,12 +34,14 @@ public class PostController {
             @RequestParam(required = false) Long communityId,
             @RequestParam(required = false) String q
     ) {
+
         return ResponseEntity.ok(postService.listPosts(page, size, sort, communityId, q));
     }
 
     @GetMapping("/{id}")
     @Operation(summary = "Visualizar post completo com comentários")
     public ResponseEntity<PostDetailResponse> getPostById(@PathVariable Long id) {
+
         return ResponseEntity.ok(postService.getPostById(id));
     }
 
@@ -49,8 +52,30 @@ public class PostController {
             @Valid @RequestBody PostRequest request,
             Authentication authentication) {
         PostResponse response = postService.createPost(request, authentication.getName());
+
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
+
+    @PutMapping("/{id}")
+    @Operation(summary = "Editar post (autor ou admin)",
+            security = @SecurityRequirement(name = "bearerAuth"))
+    public ResponseEntity<PostResponse> updatePost(@PathVariable Long id, @Valid @RequestBody PostUpdateRequest request,
+            Authentication authentication) {
+
+        return ResponseEntity.ok(postService.updatePost(id, request, authentication.getName()));
+    }
+
+    @DeleteMapping("/{id}")
+    @Operation(summary = "Deletar post (autor ou admin)",
+            security = @SecurityRequirement(name = "bearerAuth"))
+    public ResponseEntity<Void> deletePost(@PathVariable Long id, Authentication authentication) {
+
+        postService.deletePost(id, authentication.getName());
+
+        return ResponseEntity.noContent().build();
+    }
+
+
 
 
 }
