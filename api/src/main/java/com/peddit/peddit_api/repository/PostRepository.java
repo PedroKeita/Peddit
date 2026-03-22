@@ -6,13 +6,14 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
+import org.springframework.stereotype.Repository;
 
+@Repository
 public interface PostRepository  extends JpaRepository<Post, Long> {
 
     @Query("""
-    SELECT p FROM Post p
-    WHERE (:communityId IS NULL OR p.community.id = :communityId)
-    AND (:q IS NULL OR LOWER(p.title) LIKE LOWER(CONCAT('%', :q, '%')))
+ SELECT p FROM Post p
+ WHERE (:communityId IS NULL OR p.community.id = :communityId)
 """)
     Page<Post> findAllWithFilters(
             @Param("communityId") Long communityId,
