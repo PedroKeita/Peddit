@@ -18,6 +18,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import com.peddit.peddit_api.repository.CommunityRepository;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -30,6 +31,7 @@ public class PostService {
     private final CommunityRepository communityRepository;
     private final CommentRepository commentRepository;
 
+    @Transactional(readOnly = true)
     public Page<PostResponse> listPosts(int page, int size, String sort,
                                         Long communityId, String q) {
 
@@ -38,6 +40,7 @@ public class PostService {
                 : Sort.by("createdAt").descending();
 
         Pageable pageable = PageRequest.of(page, size, sorting);
+        System.out.println("Q = " + q);
 
         return postRepository.findAllWithFilters(
                 communityId,
@@ -64,13 +67,13 @@ public class PostService {
         return PostResponse.from(postRepository.save(post));
     }
 
-
+    @Transactional(readOnly = true)
     public PostDetailResponse getPostById(Long id) {
         Post post = postRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Post não encontrado"));
 
         List<CommentResponse> comments = commentRepository
-                .findByPostIdAndParentIsNullOrderByCreatedAtDesc(id)
+                .findTopLevelCommentsWithAuthor(id)
                 .stream()
                 .map(CommentResponse::from)
                 .toList();

@@ -45,7 +45,7 @@ public class Post {
     private List<Comment> comments = new ArrayList<>();
 
     @CreationTimestamp
-    @Column(name = "Created_at", updatable = false)
+    @Column(name = "created_at", updatable = false)
     private LocalDateTime createdAt;
 
     @UpdateTimestamp
