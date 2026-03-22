@@ -2,9 +2,12 @@ package com.peddit.peddit_api.controller;
 
 import com.peddit.peddit_api.dto.request.PostRequest;
 import com.peddit.peddit_api.dto.request.PostUpdateRequest;
+import com.peddit.peddit_api.dto.request.VoteRequest;
 import com.peddit.peddit_api.dto.response.PostDetailResponse;
 import com.peddit.peddit_api.dto.response.PostResponse;
+import com.peddit.peddit_api.dto.response.VoteResponse;
 import com.peddit.peddit_api.service.PostService;
+import com.peddit.peddit_api.service.VoteService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -24,6 +27,7 @@ import org.springframework.web.bind.annotation.*;
 public class PostController {
 
     private final PostService postService;
+    private final VoteService voteService;
 
     @GetMapping
     @Operation(summary = "Listar posts com filtros e paginação")
@@ -75,7 +79,14 @@ public class PostController {
         return ResponseEntity.noContent().build();
     }
 
+    @PostMapping("{id}/vote")
+    @Operation(summary = "Votar em post (upvote/downvote)",
+                security = @SecurityRequirement(name = "bearerAuth"))
+    public ResponseEntity<VoteResponse> vote(@PathVariable Long id, @Valid @RequestBody VoteRequest request,
+                                             Authentication authentication) {
 
+        return ResponseEntity.ok(voteService.vote(id, request, authentication.getName()));
+    }
 
 
 }
