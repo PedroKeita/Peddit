@@ -1,6 +1,7 @@
 package com.peddit.peddit_api.service;
 
 import com.peddit.peddit_api.dto.request.PostRequest;
+import com.peddit.peddit_api.dto.request.PostUpdateRequest;
 import com.peddit.peddit_api.dto.response.CommentResponse;
 import com.peddit.peddit_api.dto.response.PostDetailResponse;
 import com.peddit.peddit_api.dto.response.PostResponse;
@@ -20,6 +21,7 @@ import org.springframework.stereotype.Service;
 import com.peddit.peddit_api.repository.CommunityRepository;
 import org.springframework.transaction.annotation.Transactional;
 
+import org.springframework.security.access.AccessDeniedException;
 import java.util.List;
 
 @Service
@@ -79,5 +81,44 @@ public class PostService {
                 .toList();
 
         return PostDetailResponse.from(post, comments);
+    }
+
+    @Transactional
+    public PostResponse updatePost(Long id, PostUpdateRequest request, String email)  {
+        Post post = postRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Post não encontrado"));
+
+        User requester = userRepository.findByEmail(email)
+                .orElseThrow(() -> new ResourceNotFoundException("Usuário não encontrado"));
+
+        boolean isAuthor = post.getAuthor().getId().equals(requester.getId());
+        boolean isAdmin = requester.getRole().name().equals("ADMIN");
+
+        if (!isAuthor && !isAdmin) {
+            throw new AccessDeniedException("Você não tem permissão para editar este post");
+        }
+
+        post.setTitle(request.getTitle());
+        post.setContent(request.getContent());
+
+        return PostResponse.from(postRepository.save(post));
+    }
+
+    @Transactional
+    public void deletePost(Long id, String email) {
+        Post post = postRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Post não encontrado"));
+
+        User requester = userRepository.findByEmail(email)
+                .orElseThrow(() -> new ResourceNotFoundException("Usuário não encontrado"));
+
+        boolean isAuthor = post.getAuthor().getId().equals(requester.getId());
+        boolean isAdmin = requester.getRole().name().equals("ADMIN");
+
+        if (!isAuthor && !isAdmin) {
+            throw new AccessDeniedException("Você não tem permissão para deletar este post");
+        }
+
+        postRepository.delete(post);
     }
 }
