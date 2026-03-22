@@ -1,6 +1,7 @@
 package com.peddit.peddit_api.controller;
 
 import com.peddit.peddit_api.dto.request.PostRequest;
+import com.peddit.peddit_api.dto.response.PostDetailResponse;
 import com.peddit.peddit_api.dto.response.PostResponse;
 import com.peddit.peddit_api.service.PostService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -35,6 +36,12 @@ public class PostController {
         return ResponseEntity.ok(postService.listPosts(page, size, sort, communityId, q));
     }
 
+    @GetMapping("/{id}")
+    @Operation(summary = "Visualizar post completo com comentários")
+    public ResponseEntity<PostDetailResponse> getPostById(@PathVariable Long id) {
+        return ResponseEntity.ok(postService.getPostById(id));
+    }
+
     @PostMapping
     @Operation(summary = "Criar novo post",
             security = @SecurityRequirement(name = "bearerAuth"))
@@ -44,4 +51,6 @@ public class PostController {
         PostResponse response = postService.createPost(request, authentication.getName());
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
+
+
 }
