@@ -44,6 +44,8 @@ public class Post {
     @Builder.Default
     private List<Comment> comments = new ArrayList<>();
 
+
+
     @CreationTimestamp
     @Column(name = "created_at", updatable = false)
     private LocalDateTime createdAt;

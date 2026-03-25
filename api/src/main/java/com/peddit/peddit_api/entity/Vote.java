@@ -27,6 +27,10 @@ public class Vote {
     @JoinColumn(name = "post_id", nullable = false)
     private Post post;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "comment_id")
+    private Comment comment;
+
     @Column(nullable = false)
     private Integer value;
 

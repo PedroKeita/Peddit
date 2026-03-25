@@ -7,6 +7,7 @@ import lombok.Data;
 @Builder
 public class VoteResponse {
     private Long postId;
+    private Long commentId;
     private Integer score;
     private Integer userVote;
 }
