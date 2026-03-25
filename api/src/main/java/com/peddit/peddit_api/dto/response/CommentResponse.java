@@ -5,6 +5,7 @@ import lombok.Builder;
 import lombok.Data;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Data
 @Builder
@@ -14,16 +15,16 @@ public class CommentResponse {
     private String content;
     private AuthorResponse author;
     private Integer score;
-    private Long replyCount;
+    private List<CommentResponse> replies;
     private LocalDateTime createdAt;
 
-    public static CommentResponse from(Comment comment) {
+    public static CommentResponse from(Comment comment, List<CommentResponse> replies) {
         return CommentResponse.builder()
                 .id(comment.getId())
                 .content(comment.getContent())
                 .author(AuthorResponse.from(comment.getAuthor()))
                 .score(comment.getScore())
-                .replyCount(0L)
+                .replies(replies)
                 .createdAt(comment.getCreatedAt())
                 .build();
     }

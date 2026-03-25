@@ -5,6 +5,7 @@ import com.peddit.peddit_api.dto.request.PostUpdateRequest;
 import com.peddit.peddit_api.dto.response.CommentResponse;
 import com.peddit.peddit_api.dto.response.PostDetailResponse;
 import com.peddit.peddit_api.dto.response.PostResponse;
+import com.peddit.peddit_api.entity.Comment;
 import com.peddit.peddit_api.entity.Community;
 import com.peddit.peddit_api.entity.Post;
 import com.peddit.peddit_api.entity.User;
@@ -32,6 +33,14 @@ public class PostService {
     private final UserRepository userRepository;
     private final CommunityRepository communityRepository;
     private final CommentRepository commentRepository;
+
+    private CommentResponse mapToResponse(Comment comment) {
+        List<CommentResponse> replies = comment.getReplies().stream()
+                .map(this::mapToResponse)
+                .toList();
+
+        return CommentResponse.from(comment, replies);
+    }
 
     @Transactional(readOnly = true)
     public Page<PostResponse> listPosts(int page, int size, String sort,
@@ -77,7 +86,7 @@ public class PostService {
         List<CommentResponse> comments = commentRepository
                 .findTopLevelCommentsWithAuthor(id)
                 .stream()
-                .map(CommentResponse::from)
+                .map(this::mapToResponse)
                 .toList();
 
         return PostDetailResponse.from(post, comments);

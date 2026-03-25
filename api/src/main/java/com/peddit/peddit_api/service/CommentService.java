@@ -13,6 +13,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+
 @Service
 @RequiredArgsConstructor
 public class CommentService {
@@ -20,6 +22,15 @@ public class CommentService {
     private final CommentRepository commentRepository;
     private final PostRepository postRepository;
     private final UserRepository userRepository;
+
+    private CommentResponse mapToResponse(Comment comment) {
+
+        List<CommentResponse> replies = comment.getReplies().stream()
+                .map(this::mapToResponse)
+                .toList();
+
+        return CommentResponse.from(comment, replies);
+    }
 
     @Transactional
     public CommentResponse createComment(CommentRequest request, String email) {
@@ -31,7 +42,7 @@ public class CommentService {
 
 
         Comment parent = null;
-        if (request.getParentId() != null) {
+        if (request.getParentId() != null && request.getParentId() > 0) {
             parent = commentRepository.findById(request.getParentId())
                     .orElseThrow(() -> new ResourceNotFoundException("Comentário pai não encontrado"));
 
@@ -49,7 +60,19 @@ public class CommentService {
                 .score(0)
                 .build();
 
-        return CommentResponse.from(commentRepository.save(comment));
+        Comment saved = commentRepository.save(comment);
+        return mapToResponse(saved);
 
+    }
+
+    @Transactional(readOnly = true)
+    public List<CommentResponse> getCommentsByPost(Long postId) {
+
+        List<Comment> comments = commentRepository
+                .findTopLevelCommentsWithAuthor(postId);
+
+        return comments.stream()
+                .map(this::mapToResponse)
+                .toList();
     }
 }
