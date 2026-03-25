@@ -3,6 +3,7 @@ package com.peddit.peddit_api.config;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -35,17 +36,17 @@ public class SecurityConfig {
                         .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 )
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers(
-                                "/api/auth/**",
-                                "/api/communities",
-                                "/api/communities/**",
-                                "/api/comments/**",
-                                "/api/posts/**",
-                                "/swagger-ui.html",
-                                "/swagger-ui/**",
-                                "/api-docs/**",
-                                "/actuator/**"
-                        ).permitAll()
+                        .requestMatchers("/api/auth/**").permitAll()
+
+                        // GET público
+                        .requestMatchers(HttpMethod.GET, "/api/posts/**").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/comments/**").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/communities/**").permitAll()
+
+                        // Swagger
+                        .requestMatchers("/swagger-ui/**", "/api-docs/**").permitAll()
+
+                        // resto precisa estar autenticado
                         .anyRequest().authenticated()
                 )
                 .addFilterBefore(jwtAuthFilter,
