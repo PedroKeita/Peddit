@@ -3,9 +3,11 @@ package com.peddit.peddit_api.controller;
 import com.peddit.peddit_api.dto.request.PostRequest;
 import com.peddit.peddit_api.dto.request.PostUpdateRequest;
 import com.peddit.peddit_api.dto.request.VoteRequest;
+import com.peddit.peddit_api.dto.response.CommentResponse;
 import com.peddit.peddit_api.dto.response.PostDetailResponse;
 import com.peddit.peddit_api.dto.response.PostResponse;
 import com.peddit.peddit_api.dto.response.VoteResponse;
+import com.peddit.peddit_api.service.CommentService;
 import com.peddit.peddit_api.service.PostService;
 import com.peddit.peddit_api.service.VoteService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -19,6 +21,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 
 @RestController
 @RequestMapping("/api/posts")
@@ -28,6 +32,7 @@ public class PostController {
 
     private final PostService postService;
     private final VoteService voteService;
+    private final CommentService commentService;
 
     @GetMapping
     @Operation(summary = "Listar posts com filtros e paginação")
@@ -86,6 +91,12 @@ public class PostController {
                                              Authentication authentication) {
 
         return ResponseEntity.ok(voteService.vote(id, request, authentication.getName()));
+    }
+
+    @GetMapping("/{id}/comments")
+    @Operation(summary = "Listar comentários de um post")
+    public ResponseEntity<List<CommentResponse>> getComments(@PathVariable Long id) {
+        return ResponseEntity.ok(commentService.getCommentsByPost(id));
     }
 
 
