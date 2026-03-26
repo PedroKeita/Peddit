@@ -1,3 +1,4 @@
 rootProject.name = 'peddit-api'
 
 includeBuild 'api'
+includeBuild 'app'
