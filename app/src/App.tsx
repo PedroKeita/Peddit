@@ -2,7 +2,7 @@ import { Routes, Route } from 'react-router-dom'
 import LoginPage from './pages/LoginPage'
 import RegisterPage from './pages/RegisterPage'
 import FeedPage from './pages/FeedPage'
-
+import PostDetailPage from './pages/PostDetailPage'
 
 
 function NotFound() {
@@ -15,6 +15,7 @@ export default function App() {
             <Route path="/" element={<FeedPage />} />
             <Route path="/login" element={<LoginPage />} />
             <Route path="/register" element={<RegisterPage />} />
+            <Route path="/posts/:id" element={<PostDetailPage />} />
             <Route path="*" element={<NotFound />} />
         </Routes>
     )
