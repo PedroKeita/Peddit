@@ -30,25 +30,22 @@ public class SecurityConfig {
     private final JwtAuthFilter jwtAuthFilter;
 
     @Bean
-    public PasswordEncoder passwordEncoder() {
-        return new BCryptPasswordEncoder();
-    }
-
-    @Bean
-    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
+                .securityMatcher("/**")
                 .cors(Customizer.withDefaults())
                 .csrf(csrf -> csrf.disable())
-                .httpBasic(basic -> basic.disable())
-                .formLogin(formLogin -> formLogin.disable())
-                .sessionManagement(session -> session
-                        .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+                .httpBasic(httpBasic -> httpBasic.disable())
+                .formLogin(form -> form.disable())
+                .logout(logout -> logout.disable())
+                .sessionManagement(session ->
+                        session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 )
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(
                                 "/",
+                                "/api/health",
                                 "/api/auth/**",
-                                "/api/communities",
                                 "/api/communities/**",
                                 "/api/posts/**",
                                 "/api/comments/**",
@@ -59,10 +56,16 @@ public class SecurityConfig {
                         ).permitAll()
                         .anyRequest().authenticated()
                 )
-                .addFilterBefore(jwtAuthFilter,
-                        UsernamePasswordAuthenticationFilter.class);
+                .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
+
         return http.build();
     }
+
+    @Bean
+    public PasswordEncoder passwordEncoder() {
+        return new BCryptPasswordEncoder();
+    }
+
 
     @Bean
     public CorsConfigurationSource corsConfigurationSource(
