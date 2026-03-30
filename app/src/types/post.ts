@@ -26,3 +26,23 @@ export interface PageResponse<T> {
     number: number
     last: boolean
 }
+
+export interface Comment {
+    id: number
+    content: string
+    author: Author
+    score: number
+    replies: Comment[]
+    createdAt: string
+}
+
+export interface PostDetail {
+    id: number
+    title: string
+    content: string
+    author: Author
+    community: Community
+    score: number
+    comments: Comment[]
+    createdAt: string
+}
